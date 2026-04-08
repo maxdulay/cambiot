@@ -1,23 +1,24 @@
-import config from "@colyseus/tools";
+import { defineServer, defineRoom } from "colyseus";
 import { monitor } from "@colyseus/monitor";
 import { playground } from "@colyseus/playground";
-import { auth, JWT } from "@colyseus/auth";
+import { JWT } from "@colyseus/auth";
+import express from "express";
 
 /**
  * Import your Room files
  */
 import { MyRoom } from "./rooms/MyRoom";
 
-export default config({
-    initializeGameServer: (gameServer) => {
-        /**
-         * Define your room handlers:
-         */
-        gameServer.define('my_room', MyRoom)
-            .filterBy(['channelId']);
+export default defineServer({
+    rooms: {
+        my_room: defineRoom(MyRoom, {
+            filterBy: ['channelId'],
+        }),
     },
 
-    initializeExpress: (app) => {
+    express: (app) => {
+        app.use(express.json());
+
         /**
          * Bind your custom express routes here:
          * Read more: https://expressjs.com/en/starter/basic-routing.html
@@ -54,8 +55,8 @@ export default config({
               body: new URLSearchParams({
                 client_id: process.env.DISCORD_CLIENT_ID,
                 client_secret: process.env.DISCORD_CLIENT_SECRET,
-                grant_type: 'authorization_code',
                 code: req.body.code,
+                grant_type: 'authorization_code',
               }),
             });
 
@@ -109,11 +110,4 @@ export default config({
         // app.use(auth.prefix, auth.routes())
         //
     },
-
-
-    beforeListen: () => {
-        /**
-         * Before before gameServer.listen() is called.
-         */
-    }
 });

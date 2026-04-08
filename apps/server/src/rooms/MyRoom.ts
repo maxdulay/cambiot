@@ -1,5 +1,5 @@
 import { JWT } from "@colyseus/auth";
-import { Room, Client } from "@colyseus/core";
+import { Room, Client } from "colyseus";
 import { Schema, MapSchema, type } from "@colyseus/schema";
 
 export class Vec2 extends Schema {
@@ -17,7 +17,7 @@ export class MyRoomState extends Schema {
   @type({ map: Player }) players = new MapSchema<Player>();
 }
 
-export class MyRoom extends Room<MyRoomState> {
+export class MyRoom extends Room {
   state = new MyRoomState();
   maxClients = 4;
 
@@ -43,7 +43,7 @@ export class MyRoom extends Room<MyRoomState> {
     this.state.players.set(client.sessionId, player);
   }
 
-  onLeave (client: Client, consented: boolean) {
+  onLeave (client: Client, code: number) {
     console.log(client.sessionId, "left!");
     this.state.players.delete(client.sessionId);
   }
