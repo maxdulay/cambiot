@@ -7,11 +7,11 @@ import express from "express";
 /**
  * Import your Room files
  */
-import { MyRoom } from "./rooms/MyRoom";
+import { CambioRoom } from "./rooms/CambioRoom.js";
 
 export default defineServer({
     rooms: {
-        my_room: defineRoom(MyRoom, {
+        my_room: defineRoom(CambioRoom, {
             filterBy: ['channelId'],
         }),
     },
